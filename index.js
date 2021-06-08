@@ -13,19 +13,19 @@ const isDraw = () => {
 const [CANVAS_WIDTH, CANVAS_HEIGHT] = [29 * DOT + DOT / 2, 280.5];
 
 class Pattern {
-  constructor(isSimetric = true) {
-    this._isSimetric = isSimetric;
+  constructor(issymmetric = true) {
+    this._issymmetric = issymmetric;
     this._canvas = createCanvas(CANVAS_WIDTH * 2, CANVAS_HEIGHT * 2 - DOT);
     this._ctx = this._canvas.getContext("2d");
 
     this._ctx.translate(0.5, 0.5);
     this._ctx.translate(DOT / 2 - 0.5, DOT / 2);
     this.drawPart(true);
-    if (!isSimetric) {
+    if (!issymmetric) {
       this.drawPart(false);
     }
     this.mirrorImage(true, false);
-    if (isSimetric) {
+    if (issymmetric) {
       this.mirrorImage(true, true);
     }
   }
@@ -131,12 +131,12 @@ class Pattern {
 function main() {
   const token = process.env["TOKEN"];
   const bot = new TelegramBot(token, { polling: true });
-  bot.onText(/\/simetric/, (msg, match) => {
+  bot.onText(/\/symmetric/, (msg, match) => {
     const chatId = msg.chat.id;
     const p = new Pattern(true);
     bot.sendPhoto(chatId, p.draw());
   });
-  bot.onText(/\/asimetric/, (msg, match) => {
+  bot.onText(/\/asymmetric/, (msg, match) => {
     const chatId = msg.chat.id;
     const p = new Pattern(false);
     bot.sendPhoto(chatId, p.draw());
