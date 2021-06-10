@@ -132,7 +132,7 @@ class Pattern {
 function toAnalitics(user, msg) {
   let message = msg;
   if (user) {
-    message += `from ${user.firstname} ${user.last_name || ""} ${
+    message += ` from ${user.first_name} ${user.last_name || ""} ${
       user.username || ""
     } ${user.language_code || ""}`;
   }
@@ -144,9 +144,6 @@ function toAnalitics(user, msg) {
       message,
       version: "1.0",
       user_id: user ? user.id : "unkn",
-    })
-    .then((response) => {
-      console.log(response);
     })
     .catch((error) => {
       console.log(error);
