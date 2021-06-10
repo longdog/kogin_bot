@@ -137,7 +137,7 @@ function toAnalitics(user, msg) {
     } ${user.language_code || ""}`;
   }
   axios
-    .post("/https://chatbase-area120.appspot.com/api/message", {
+    .post("https://chatbase-area120.appspot.com/api/message", {
       api_key: process.env.CHATBASE,
       type: "user",
       platform: "telegram",
