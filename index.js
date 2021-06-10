@@ -1,9 +1,7 @@
 const { createCanvas } = require("canvas");
 process.env.NTBA_FIX_319 = 1;
 const TelegramBot = require("node-telegram-bot-api");
-const chatbase = require("@google/chatbase")
-  .setApiKey(process.env.CHATBASE)
-  .setPlatform("telegram");
+const axios = require("axios");
 
 const DOT = 20;
 const GRID_LINE = 1;
@@ -131,22 +129,28 @@ class Pattern {
 // const p = new Pattern(true);
 // p.drawImg();
 
-function toAnalitics(user, chat_id, msg) {
+function toAnalitics(user, msg) {
   let message = msg;
   if (user) {
     message += `from ${user.firstname} ${user.last_name || ""} ${
       user.username || ""
     } ${user.language_code || ""}`;
   }
-  chatbase
-    .newMessage()
-    .setAsTypeUser()
-    .setMessage(message)
-    .setUserId(user ? user.id : "unkn")
-    .setCustomSessionId(chat_id)
-    .send()
-    .then((msg) => console.log(msg.getCreateResponse()))
-    .catch((err) => console.error(err));
+  axios
+    .post("/https://chatbase-area120.appspot.com/api/message", {
+      api_key: process.env.CHATBASE,
+      type: "user",
+      platform: "telegram",
+      message,
+      version: "1.0",
+      user_id: user ? user.id : "unkn",
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 function main() {
@@ -155,13 +159,13 @@ function main() {
   bot.onText(/\/symmetric/, (msg, match) => {
     const chatId = msg.chat.id;
     const p = new Pattern(true);
-    toAnalitics(msg.from, chatId, "symmetric");
+    toAnalitics(msg.from, "symmetric");
     bot.sendPhoto(chatId, p.draw());
   });
   bot.onText(/\/asymmetric/, (msg, match) => {
     const chatId = msg.chat.id;
     const p = new Pattern(false);
-    toAnalitics(msg.from, chatId, "asymmetric");
+    toAnalitics(msg.from, "asymmetric");
     bot.sendPhoto(chatId, p.draw());
   });
 }
