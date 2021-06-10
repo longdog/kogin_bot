@@ -1,6 +1,9 @@
 const { createCanvas } = require("canvas");
 process.env.NTBA_FIX_319 = 1;
 const TelegramBot = require("node-telegram-bot-api");
+const chatbase = require("@google/chatbase")
+  .setApiKey(process.env.CHATBASE)
+  .setPlatform("telegram");
 
 const DOT = 20;
 const GRID_LINE = 1;
@@ -128,17 +131,37 @@ class Pattern {
 // const p = new Pattern(true);
 // p.drawImg();
 
+function toAnalitics(user, chat_id, msg) {
+  let message = msg;
+  if (user) {
+    message += `from ${user.firstname} ${user.last_name || ""} ${
+      user.username || ""
+    } ${user.language_code || ""}`;
+  }
+  chatbase
+    .newMessage()
+    .setAsTypeUser()
+    .setMessage(message)
+    .setUserId(user ? user.id : "unkn")
+    .setCustomSessionId(chat_id)
+    .send()
+    .then((msg) => console.log(msg.getCreateResponse()))
+    .catch((err) => console.error(err));
+}
+
 function main() {
   const token = process.env["TOKEN"];
   const bot = new TelegramBot(token, { polling: true });
   bot.onText(/\/symmetric/, (msg, match) => {
     const chatId = msg.chat.id;
     const p = new Pattern(true);
+    toAnalitics(msg.from, chatId, "symmetric");
     bot.sendPhoto(chatId, p.draw());
   });
   bot.onText(/\/asymmetric/, (msg, match) => {
     const chatId = msg.chat.id;
     const p = new Pattern(false);
+    toAnalitics(msg.from, chatId, "asymmetric");
     bot.sendPhoto(chatId, p.draw());
   });
 }

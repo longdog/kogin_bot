@@ -5,6 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@google/chatbase": "^1.1.2",
     "canvas": "^2.8.0",
     "dotenv": "^10.0.0",
     "node-telegram-bot-api": "^0.53.0"
