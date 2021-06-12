@@ -1,10 +1,10 @@
 process.env.NTBA_FIX_319 = 1;
-const TelegramBot = require("node-telegram-bot-api");
-const axios = require("axios");
 
 const patternFactory = require("./Pattern");
+const Telegram = require("./Telegram");
+const Web = require("./Web");
 
-const { getImage, getBuffer, withGrid, generatePattern } = require("./utils");
+const { getImage, withGrid, generatePattern } = require("./utils");
 
 const DOT = 20;
 const GRID_LINE = 1;
@@ -193,19 +193,27 @@ const p = newPattern(generatePattern());
 
 getImage(withGrid(p.canvas, GRID_LINE, DOT), __dirname + "/test.png");
 
-function main() {
+const router = {
+  symmetric: () => {
+    const p = newPattern(generatePattern(true));
+    return withGrid(p.canvas, GRID_LINE, DOT);
+  },
+  asymmetric: () => {
+    const p = newPattern(generatePattern(false));
+    return withGrid(p.canvas, GRID_LINE, DOT);
+  },
+  generate: (str) => {
+    const p = newPattern(str);
+    return withGrid(p.canvas, GRID_LINE, DOT);
+  },
+};
+
+function app() {
   const token = process.env["TOKEN"];
-  const bot = new TelegramBot(token, { polling: true });
-  bot.onText(/\/symmetric/, (msg, match) => {
-    const chatId = msg.chat.id;
-    const p = new Pattern(true);
-    bot.sendPhoto(chatId, p.draw());
-  });
-  bot.onText(/\/asymmetric/, (msg, match) => {
-    const chatId = msg.chat.id;
-    const p = new Pattern(false);
-    bot.sendPhoto(chatId, p.draw());
-  });
+  const t = new Telegram(token, router);
+  const w = new Web(8000, router);
+
+  ///https://gist.github.com/rla/2689424
 }
 
-// main();
+// app();

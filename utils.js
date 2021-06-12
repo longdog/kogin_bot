@@ -60,8 +60,16 @@ function getImage(canvas, filepath) {
   out.on("finish", () => console.log("The PNG file was created."));
 }
 
-function getBuffer() {
-  return canvas.toBuffer();
+function getBuffer(canvas) {
+  return new Promise((res, rej) =>
+    canvas.toBuffer((err, buff) => {
+      if (err) {
+        rej(err);
+      } else {
+        res(buff);
+      }
+    })
+  );
 }
 
 function isDraw() {
