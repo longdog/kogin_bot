@@ -41,6 +41,39 @@ class Pattern {
     this._ctx.restore();
   }
 
+  _drawGrid(ctx) {
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(0,0,0,0.4)";
+    for (let x = 0; x <= this.width; x += this._stitch.stitchStep) {
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, this.height);
+      for (let y = 0; y <= this.height; y += this._stitch.stitchStep) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(this.width, y);
+      }
+    }
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  withGrid() {
+    const gridCanvas = createCanvas(this.width, this.height);
+    const ctx = gridCanvas.getContext("2d");
+    ctx.fillStyle = "rgba(255,255,255,1)";
+    // white background
+    ctx.fillRect(0, 0, this.width, this.height);
+    ctx.save();
+    // for pixel perfect
+    ctx.translate(0.5, 0.5);
+    this._drawGrid(ctx);
+    ctx.restore();
+    ctx.drawImage(this.canvas, 0, 0);
+    this._ctx = ctx;
+    this.canvas = gridCanvas;
+    return this;
+  }
+
   draw(str, isSymmetric = true) {
     let patternArr = str.split(/\n/);
     if (patternArr.length !== 9) {
@@ -49,6 +82,7 @@ class Pattern {
     this._drawTopStr(patternArr);
     this._mirror(true, false);
     this._mirror(true, true);
+    return this;
   }
 
   _drawTopStr(patternArr) {
@@ -74,7 +108,7 @@ class Pattern {
           if (p === "0") {
             i++;
           } else {
-            const n = parseInt(p) + 1;
+            const n = parseInt(p, 16) + 1;
             this._drawStitch(hasPrev ? ++i : i, y, n);
             i += n;
             hasPrev = true;
@@ -92,6 +126,7 @@ class Pattern {
  * @param {number} height canvas height
  * @param {number} stitchStep one stitch length
  * @param {number} stitchWeight stitch weight
+ * @param {number} gridWeight grid line weight
  * @return {function} New pattern factory method
  */
 module.exports = function patternFactory(
@@ -107,7 +142,7 @@ module.exports = function patternFactory(
    */
   return (patternStr) => {
     const p = new Pattern(width, height, stitchStep, stitchWeight);
-    p.draw(patternStr);
+    p.draw(patternStr).withGrid();
     return p;
   };
 };

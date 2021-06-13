@@ -187,24 +187,22 @@ const newPattern = patternFactory(
   CANVAS_WIDTH * 2,
   CANVAS_HEIGHT * 2 - DOT,
   DOT,
-  STITCH_LINE
+  STITCH_LINE,
+  GRID_LINE
 );
 const p = newPattern(generatePattern());
 
-getImage(withGrid(p.canvas, GRID_LINE, DOT), __dirname + "/test.png");
+getImage(p.canvas, __dirname + "/test.png");
 
 const router = {
   symmetric: () => {
-    const p = newPattern(generatePattern(true));
-    return withGrid(p.canvas, GRID_LINE, DOT);
+    return newPattern(generatePattern(true));
   },
   asymmetric: () => {
-    const p = newPattern(generatePattern(false));
-    return withGrid(p.canvas, GRID_LINE, DOT);
+    return newPattern(generatePattern(false));
   },
   generate: (str) => {
-    const p = newPattern(str);
-    return withGrid(p.canvas, GRID_LINE, DOT);
+    return newPattern(str);
   },
 };
 
