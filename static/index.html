@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Kogin patterns</title>
+    <style>
+        html{
+            font-variant:small-caps;
+            font-weight: 100;
+            font-size: 1em;
+            line-height: 1.4;
+            font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+            letter-spacing:0.2em;
+            -webkit-text-size-adjust: 100%;
+        }
+        body{
+            margin:0;
+            padding:20px;
+            font-size: 2em;
+        }
+        h1{
+            font-size: 1.5em;
+            font-weight: 400;
+            margin: 0 0 30px 0;
+            line-height: 1;
+        }
+        h2{
+            font-size: 1.3em;
+            font-weight: 400;
+            margin: 20px 0 10px 0;
+            line-height: 1;
+        }
+        a:any-link{
+            color: #0000ff;
+            text-decoration: none;
+            border-bottom: 1px solid #0000ff;
+        }
+        .contacts ul{
+            margin: 0;
+        }
+        h1>.logo{
+            color: #0000ff;
+        }
+        img{
+            vertical-align: middle;
+        }
+        .patternView{
+            display: flex;
+            flex-direction: column;
+        }
+        #patternImg{
+            width:50%;
+            height: auto;
+        }
+        button#patternBtn{
+            margin-top:20px;
+            font-variant:small-caps;
+            font-size: 0.8em;
+            color: #0000ff;
+        }
+    </style>
+</head>
+<body>
+    <header><h1><span>kogin patterns</span> <span class="logo" aria-hidden="true"><=></span> <span lang="jp">こぎん刺し</span></h1></header>
+    <main>
+        <div class="patternView">
+            <img id="patternImg" alt="Kogin pattern" width="1180" height="541" src="/symmetric" >
+            <div class="patternView-control">
+                <label aria-label="Check it for asymmetric pattern"><input id="asymmetricCheck" type="checkbox">asymmetric</label>
+                <button id="patternBtn">next pattern</button>
+            </div>
+        </div>
+        <div class="contacts">
+            <h2>links</h2>
+            <ul>
+                <li><a target="_blank" rel=”noopener noreferrer” href="https://t.me/kogin_bot">telegram bot</a></li>
+                <li><a target="_blank" rel=”noopener noreferrer” href="https://t.me/kogin_bot">twitter</a></li>
+                <li><a target="_blank" rel=”noopener noreferrer” href="https://www.instagram.com/olgaabrosimova/">instagram</a></li>
+            </ul>
+            
+        </div>
+    </main>
+    <script>
+        const img = document.getElementById("patternImg");
+        const btn = document.getElementById("patternBtn");
+        const check = document.getElementById("asymmetricCheck");
+        btn.addEventListener("click", ()=>{
+            const type = check.checked?'asymmetric':'symmetric';
+            img.setAttribute('src', `/${type}?d=${Date.now()}`);
+        });
+    </script>
+</body>
+</html>

@@ -87,7 +87,6 @@ function generatePattern(isSymmetric = true) {
     } else {
       len -= 2;
     }
-    console.log(i, len, strLine);
     str += strLine + "\n";
   }
   str = str.slice(0, -1);

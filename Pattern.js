@@ -53,6 +53,8 @@ class Pattern {
         ctx.lineTo(this.width, y);
       }
     }
+    ctx.moveTo(this.width - 1, 0);
+    ctx.lineTo(this.width - 1, this.height);
     ctx.stroke();
     ctx.closePath();
   }
