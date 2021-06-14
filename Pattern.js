@@ -108,7 +108,7 @@ class Pattern {
           if (p === "0") {
             i++;
           } else {
-            const n = parseInt(p, 16) + 1;
+            const n = parseInt(p, 20) + 1;
             this._drawStitch(hasPrev ? ++i : i, y, n);
             i += n;
             hasPrev = true;

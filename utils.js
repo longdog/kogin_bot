@@ -76,30 +76,47 @@ function isDraw() {
   return Math.random() >= 0.5;
 }
 
+/**
+ * get random stitch count 1-max
+ * @param {number} max max stitch count
+ */
+function getStitchCount(max) {
+  return Math.floor(Math.random() * max) + 1;
+}
+
 function generatePattern(isSymmetric = true) {
-  // return str2;
   let str = "";
-  //for (let i = 0; i < 17; i++) {
-  let start = 9;
-  for (let i = 0; i < 8; i++) {
-    let j = 3;
-    str += "0".repeat(j);
-    start--;
-    j += start;
-    console.log(j);
-    str += (18 - j).toString(16);
-    // while (j <= 28) {
-    //   // if (isDraw()) {
-    //   str += 28 - j;
-    //   // } else {
-    //   //   str += "0";
-    //   // }
-    //   ++j;
-    // }
-    str += "\n";
+  let len = 1;
+  for (let i = 0; i < 9; i++) {
+    let strLine = "0".repeat(3);
+    let curLen = 0;
+    let prevSpace = true;
+    while (true) {
+      if (len - curLen === 1 && prevSpace) {
+        strLine += "1";
+        break;
+      }
+      if (len - curLen <= 1) break;
+      if (isDraw() && prevSpace) {
+        const sc = getStitchCount(len - curLen);
+        strLine += sc.toString(20);
+        curLen += sc + 1;
+        prevSpace = false;
+      } else {
+        if (!prevSpace) {
+          ++curLen;
+        }
+        strLine += "0";
+        ++curLen;
+        prevSpace = true;
+      }
+    }
+    len += 2;
+    str += strLine + "\n";
   }
-  // console.log(str);
-  return str2;
+  str = str.slice(0, -1);
+  console.log(str);
+  return str;
 }
 
 module.exports = {
