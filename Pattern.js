@@ -74,15 +74,60 @@ class Pattern {
     return this;
   }
 
-  draw(str, isSymmetric = true) {
+  draw(str) {
     let patternArr = str.split(/\n/);
-    if (patternArr.length !== 9) {
+    if (patternArr.length !== 9 && patternArr.length !== 17) {
       throw new Error("wrong format");
     }
-    this._drawTopStr(patternArr);
-    this._mirror(true, false);
-    this._mirror(true, true);
+    const isSymmetric = patternArr.length === 9;
+    if (isSymmetric) {
+      this._drawTopStr(patternArr);
+    } else {
+      this._drawTopStr(patternArr.slice(0, 9));
+      this._drawBottomStr(patternArr.slice(9));
+    }
+    if (isSymmetric) {
+      this._mirror(true, false);
+      this._mirror(true, true);
+    } else {
+      this._mirror(true, false);
+    }
     return this;
+  }
+
+  _drawBottomStr(patternArr) {
+    this._ctx.strokeStyle = "rgba(0,0,255,1)";
+    this._ctx.beginPath();
+    let shift = 4;
+    for (let y = 14; y <= 25; y++) {
+      let len = 4;
+      switch (y) {
+        case 25:
+          len = 2;
+          break;
+        case 24:
+          len = 6;
+          break;
+      }
+      this._drawStitch((shift += 2), y, len);
+      if (patternArr.length) {
+        let pat = patternArr.shift();
+        let i = shift + 5;
+        let hasPrev = false;
+        for (const p of pat) {
+          if (p === "0") {
+            i++;
+          } else {
+            const n = parseInt(p, 20) + 1;
+            this._drawStitch(hasPrev ? ++i : i, y, n);
+            i += n;
+            hasPrev = true;
+          }
+        }
+      }
+    }
+    this._ctx.stroke();
+    this._ctx.closePath();
   }
 
   _drawTopStr(patternArr) {

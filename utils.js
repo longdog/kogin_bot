@@ -21,38 +21,6 @@ const str2 = `0001
 000503
 00050005`;
 
-// function drawGrid(ctx, width, height, gridWeight, cellSize) {
-//   ctx.lineWidth = gridWeight;
-//   ctx.beginPath();
-//   ctx.strokeStyle = "rgba(0,0,0,0.4)";
-//   for (let x = 0; x <= width; x += cellSize) {
-//     ctx.moveTo(x, 0);
-//     ctx.lineTo(x, height);
-//     for (let y = 0; y <= height; y += cellSize) {
-//       ctx.moveTo(0, y);
-//       ctx.lineTo(width, y);
-//     }
-//   }
-//   ctx.stroke();
-//   ctx.closePath();
-// }
-
-// function withGrid(canvas, gridWeight, cellSize) {
-//   const { width, height } = canvas;
-//   const gridCanvas = createCanvas(width, height);
-//   const ctx = gridCanvas.getContext("2d");
-//   ctx.fillStyle = "rgba(255,255,255,1)";
-//   // white background
-//   ctx.fillRect(0, 0, width, height);
-//   ctx.save();
-//   // for pixel perfect
-//   ctx.translate(0.5, 0.5);
-//   drawGrid(ctx, width, height, gridWeight, cellSize);
-//   ctx.restore();
-//   ctx.drawImage(canvas, 0, 0);
-//   return gridCanvas;
-// }
-
 function getImage(canvas, filepath) {
   const out = fs.createWriteStream(filepath);
   const stream = canvas.createPNGStream();
@@ -87,7 +55,10 @@ function getStitchCount(max) {
 function generatePattern(isSymmetric = true) {
   let str = "";
   let len = 1;
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < (isSymmetric ? 9 : 17); i++) {
+    if (i === 9) {
+      len -= 4;
+    }
     let strLine = "0".repeat(3);
     let curLen = 0;
     let prevSpace = true;
@@ -111,11 +82,16 @@ function generatePattern(isSymmetric = true) {
         prevSpace = true;
       }
     }
-    len += 2;
+    if (i < 9) {
+      len += 2;
+    } else {
+      len -= 2;
+    }
+    console.log(i, len, strLine);
     str += strLine + "\n";
   }
   str = str.slice(0, -1);
-  console.log(str);
+
   return str;
 }
 

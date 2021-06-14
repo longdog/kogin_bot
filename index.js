@@ -190,7 +190,7 @@ const newPattern = patternFactory(
   STITCH_LINE,
   GRID_LINE
 );
-const p = newPattern(generatePattern());
+const p = newPattern(generatePattern(false));
 
 getImage(p.canvas, __dirname + "/test.png");
 
