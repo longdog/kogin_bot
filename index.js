@@ -59,6 +59,10 @@ function app() {
   ///https://gist.github.com/rla/2689424
   process.on("SIGTERM", cleanup);
   process.on("SIGINT", cleanup);
+  process.on("uncaughtException", (err, origin) => {
+    console.error(err, origin);
+    cleanup();
+  });
 }
 
 app();
