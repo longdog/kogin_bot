@@ -41,14 +41,95 @@ class Pattern {
     this._ctx.restore();
   }
 
-  draw(str, isSymmetric = true) {
+  _drawGrid(ctx) {
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(0,0,0,0.4)";
+    for (let x = 0; x <= this.width; x += this._stitch.stitchStep) {
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, this.height);
+      for (let y = 0; y <= this.height; y += this._stitch.stitchStep) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(this.width, y);
+      }
+    }
+    ctx.moveTo(this.width - 1, 0);
+    ctx.lineTo(this.width - 1, this.height);
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  withGrid() {
+    const gridCanvas = createCanvas(this.width, this.height);
+    const ctx = gridCanvas.getContext("2d");
+    ctx.fillStyle = "rgba(255,255,255,1)";
+    // white background
+    ctx.fillRect(0, 0, this.width, this.height);
+    ctx.save();
+    // for pixel perfect
+    ctx.translate(0.5, 0.5);
+    this._drawGrid(ctx);
+    ctx.restore();
+    ctx.drawImage(this.canvas, 0, 0);
+    this._ctx = ctx;
+    this.canvas = gridCanvas;
+    return this;
+  }
+
+  draw(str) {
     let patternArr = str.split(/\n/);
-    if (patternArr.length !== 9) {
+    if (patternArr.length !== 9 && patternArr.length !== 17) {
       throw new Error("wrong format");
     }
-    this._drawTopStr(patternArr);
-    this._mirror(true, false);
-    this._mirror(true, true);
+    const isSymmetric = patternArr.length === 9;
+    if (isSymmetric) {
+      this._drawTopStr(patternArr);
+    } else {
+      this._drawTopStr(patternArr.slice(0, 9));
+      this._drawBottomStr(patternArr.slice(9));
+    }
+    if (isSymmetric) {
+      this._mirror(true, false);
+      this._mirror(true, true);
+    } else {
+      this._mirror(true, false);
+    }
+    return this;
+  }
+
+  _drawBottomStr(patternArr) {
+    this._ctx.strokeStyle = "rgba(0,0,255,1)";
+    this._ctx.beginPath();
+    let shift = 4;
+    for (let y = 14; y <= 25; y++) {
+      let len = 4;
+      switch (y) {
+        case 25:
+          len = 2;
+          break;
+        case 24:
+          len = 6;
+          break;
+      }
+      this._drawStitch((shift += 2), y, len);
+      if (patternArr.length) {
+        let pat = patternArr.shift();
+        let i = shift + 5;
+        let hasPrev = false;
+        for (const p of pat) {
+          if (p === "0") {
+            i++;
+          } else {
+            const n = parseInt(p, 20) + 1;
+            this._drawStitch(hasPrev ? ++i : i, y, n);
+            i += n;
+            hasPrev = true;
+          }
+        }
+      }
+    }
+    this._ctx.stroke();
+    this._ctx.closePath();
   }
 
   _drawTopStr(patternArr) {
@@ -74,7 +155,7 @@ class Pattern {
           if (p === "0") {
             i++;
           } else {
-            const n = parseInt(p) + 1;
+            const n = parseInt(p, 20) + 1;
             this._drawStitch(hasPrev ? ++i : i, y, n);
             i += n;
             hasPrev = true;
@@ -92,6 +173,7 @@ class Pattern {
  * @param {number} height canvas height
  * @param {number} stitchStep one stitch length
  * @param {number} stitchWeight stitch weight
+ * @param {number} gridWeight grid line weight
  * @return {function} New pattern factory method
  */
 module.exports = function patternFactory(
@@ -107,7 +189,7 @@ module.exports = function patternFactory(
    */
   return (patternStr) => {
     const p = new Pattern(width, height, stitchStep, stitchWeight);
-    p.draw(patternStr);
+    p.draw(patternStr).withGrid();
     return p;
   };
 };

@@ -21,38 +21,6 @@ const str2 = `0001
 000503
 00050005`;
 
-function drawGrid(ctx, width, height, gridWeight, cellSize) {
-  ctx.lineWidth = gridWeight;
-  ctx.beginPath();
-  ctx.strokeStyle = "rgba(0,0,0,0.4)";
-  for (let x = 0; x <= width; x += cellSize) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, height);
-    for (let y = 0; y <= height; y += cellSize) {
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-    }
-  }
-  ctx.stroke();
-  ctx.closePath();
-}
-
-function withGrid(canvas, gridWeight, cellSize) {
-  const { width, height } = canvas;
-  const gridCanvas = createCanvas(width, height);
-  const ctx = gridCanvas.getContext("2d");
-  ctx.fillStyle = "rgba(255,255,255,1)";
-  // white background
-  ctx.fillRect(0, 0, width, height);
-  ctx.save();
-  // for pixel perfect
-  ctx.translate(0.5, 0.5);
-  drawGrid(ctx, width, height, gridWeight, cellSize);
-  ctx.restore();
-  ctx.drawImage(canvas, 0, 0);
-  return gridCanvas;
-}
-
 function getImage(canvas, filepath) {
   const out = fs.createWriteStream(filepath);
   const stream = canvas.createPNGStream();
@@ -60,21 +28,74 @@ function getImage(canvas, filepath) {
   out.on("finish", () => console.log("The PNG file was created."));
 }
 
-function getBuffer() {
-  return canvas.toBuffer();
+function getBuffer(canvas) {
+  return new Promise((res, rej) =>
+    canvas.toBuffer((err, buff) => {
+      if (err) {
+        rej(err);
+      } else {
+        res(buff);
+      }
+    })
+  );
 }
 
 function isDraw() {
   return Math.random() >= 0.5;
 }
 
+/**
+ * get random stitch count 1-max
+ * @param {number} max max stitch count
+ */
+function getStitchCount(max) {
+  return Math.floor(Math.random() * max) + 1;
+}
+
 function generatePattern(isSymmetric = true) {
-  return str2;
+  let str = "";
+  let len = 1;
+  for (let i = 0; i < (isSymmetric ? 9 : 17); i++) {
+    if (i === 9) {
+      len -= 4;
+    }
+    let strLine = "0".repeat(3);
+    let curLen = 0;
+    let prevSpace = true;
+    while (true) {
+      if (len - curLen === 1 && prevSpace) {
+        strLine += "1";
+        break;
+      }
+      if (len - curLen <= 1) break;
+      if (isDraw() && prevSpace) {
+        const sc = getStitchCount(len - curLen);
+        strLine += sc.toString(20);
+        curLen += sc + 1;
+        prevSpace = false;
+      } else {
+        if (!prevSpace) {
+          ++curLen;
+        }
+        strLine += "0";
+        ++curLen;
+        prevSpace = true;
+      }
+    }
+    if (i < 9) {
+      len += 2;
+    } else {
+      len -= 2;
+    }
+    str += strLine + "\n";
+  }
+  str = str.slice(0, -1);
+
+  return str;
 }
 
 module.exports = {
   getImage,
   getBuffer,
-  withGrid,
   generatePattern,
 };
