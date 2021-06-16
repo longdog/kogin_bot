@@ -36,12 +36,16 @@ const router = {
 };
 
 function app() {
-  // const token = process.env["TOKEN"];
-  // const t = new Telegram(token, router);
+  const token = process.env["TOKEN"];
+  const t = new Telegram(token, router);
   const w = new Web(8000, router);
 
   const cleanup = async () => {
-    await w.close();
+    try {
+      await w.close();
+    } catch (error) {
+      console.error("Web service close error", error);
+    }
     console.log("Server stoped");
     process.exit(0);
   };
@@ -56,7 +60,6 @@ function app() {
       process.emit("SIGINT");
     });
   }
-  ///https://gist.github.com/rla/2689424
   process.on("SIGTERM", cleanup);
   process.on("SIGINT", cleanup);
   process.on("uncaughtException", (err, origin) => {
