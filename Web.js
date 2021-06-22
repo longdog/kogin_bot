@@ -12,10 +12,7 @@ module.exports = class Web {
     this._server = http
       .createServer((req, res) => {
         const { url } = req;
-        if (url === "/") {
-          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-          serveFile("index.html").pipe(res);
-        } else if (/^\/asymmetric/.test(url)) {
+        if (/^\/asymmetric/.test(url)) {
           const p = router["asymmetric"]().canvas;
           res.writeHead(200, { "Content-Type": "image/png" });
           p.createPNGStream().pipe(res);
@@ -24,7 +21,8 @@ module.exports = class Web {
           res.writeHead(200, { "Content-Type": "image/png" });
           p.createPNGStream().pipe(res);
         } else {
-          res.writeHead(404).end();
+          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+          serveFile("index.html").pipe(res);
         }
       })
       .listen(port);
