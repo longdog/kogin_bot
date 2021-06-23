@@ -1,9 +1,8 @@
-const TelegramBot = require("node-telegram-bot-api");
 const { getBuffer } = require("./utils");
 
 module.exports = class Telegram {
-  constructor(token, router) {
-    this._bot = new TelegramBot(token, { polling: true });
+  constructor(bot, router) {
+    this._bot = bot;
     this._bot.onText(/\/symmetric/, async (msg, match) => {
       const chatId = msg.chat.id;
       const b = await getBuffer(router["symmetric"]().canvas);
@@ -27,8 +26,5 @@ module.exports = class Telegram {
       this._bot.sendPhoto(chatId, b);
     });
     console.log("Start telegram service");
-  }
-  get bot() {
-    return this._bot;
   }
 };

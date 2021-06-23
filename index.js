@@ -1,4 +1,5 @@
 process.env.NTBA_FIX_319 = 1;
+const TelegramBot = require("node-telegram-bot-api");
 
 const patternFactory = require("./Pattern");
 const Telegram = require("./Telegram");
@@ -25,26 +26,17 @@ const newPattern = patternFactory(
 // getImage(p.canvas, __dirname + "/test.png");
 
 const router = {
-  symmetric: () => {
-    return newPattern(generatePattern(true));
-  },
-  asymmetric: () => {
-    return newPattern(generatePattern(false));
-  },
-  generate: (str) => {
-    return newPattern(str);
-  },
-  next: () => {
-    return newPattern(generatePattern(isTrue()));
-  },
+  symmetric: () => newPattern(generatePattern(true)),
+  asymmetric: () => newPattern(generatePattern(false)),
+  generate: (str) => newPattern(str),
+  next: () => newPattern(generatePattern(isTrue())),
 };
 
-function app() {
-  const token = process.env["TOKEN"];
-  const channel = process.env["CHANNEL"];
-  const t = new Telegram(token, router);
-  const w = new Web(8000, router);
-  const ch = new Channel(t.bot, channel, router);
+function app({ token, channel, port }) {
+  const bot = new TelegramBot(token, { polling: true });
+  const t = new Telegram(bot, router);
+  const w = new Web(port, router);
+  const ch = new Channel(bot, channel, router, 1000 * 60 * 60 * 12);
 
   const cleanup = async () => {
     try {
@@ -75,4 +67,9 @@ function app() {
   });
 }
 
-app();
+const config = {
+  token: process.env["TOKEN"],
+  channel: process.env["CHANNEL"],
+  port: process.env["PORT"],
+};
+app(config);
