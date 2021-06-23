@@ -28,4 +28,7 @@ module.exports = class Telegram {
     });
     console.log("Start telegram service");
   }
+  get bot() {
+    return this._bot;
+  }
 };

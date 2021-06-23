@@ -40,7 +40,7 @@ function getBuffer(canvas) {
   );
 }
 
-function isDraw() {
+function isTrue() {
   return Math.random() >= 0.5;
 }
 
@@ -68,7 +68,7 @@ function generatePattern(isSymmetric = true) {
         break;
       }
       if (len - curLen <= 1) break;
-      if (isDraw() && prevSpace) {
+      if (isTrue() && prevSpace) {
         const sc = getStitchCount(len - curLen);
         strLine += sc.toString(20);
         curLen += sc + 1;
@@ -98,4 +98,5 @@ module.exports = {
   getImage,
   getBuffer,
   generatePattern,
+  isTrue,
 };

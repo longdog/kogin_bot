@@ -3,8 +3,9 @@ process.env.NTBA_FIX_319 = 1;
 const patternFactory = require("./Pattern");
 const Telegram = require("./Telegram");
 const Web = require("./Web");
+const Channel = require("./Channel");
 
-const { generatePattern } = require("./utils");
+const { generatePattern, isTrue } = require("./utils");
 
 const DOT = 20;
 const GRID_LINE = 1;
@@ -33,16 +34,22 @@ const router = {
   generate: (str) => {
     return newPattern(str);
   },
+  next: () => {
+    return newPattern(generatePattern(isTrue()));
+  },
 };
 
 function app() {
   const token = process.env["TOKEN"];
+  const channel = process.env["CHANNEL"];
   const t = new Telegram(token, router);
   const w = new Web(8000, router);
+  const ch = new Channel(t.bot, channel, router);
 
   const cleanup = async () => {
     try {
       await w.close();
+      ch.close();
     } catch (error) {
       console.error("Web service close error", error);
     }
