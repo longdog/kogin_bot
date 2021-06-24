@@ -25,23 +25,38 @@ const newPattern = patternFactory(
 
 // getImage(p.canvas, __dirname + "/test.png");
 
-const router = {
-  symmetric: () => newPattern(generatePattern(true)),
-  asymmetric: () => newPattern(generatePattern(false)),
-  generate: (str) => newPattern(str),
-  next: () => newPattern(generatePattern(isTrue())),
-};
-
-function app({ token, channel, port }) {
+function startTelegramServices({ token, channel }, router) {
   const bot = new TelegramBot(token, { polling: true });
-  const t = new Telegram(bot, router);
-  const w = new Web(port, router);
+  new Telegram(bot, router);
   const ch = new Channel(bot, channel, router, 1000 * 60 * 60 * 12);
+
+  return () => {
+    ch.close();
+  };
+}
+
+function startWebService({ port }, router) {
+  const w = new Web(port, router);
+  return async () => {
+    await w.close();
+  };
+}
+
+function app(config) {
+  const router = {
+    symmetric: () => newPattern(generatePattern(true)),
+    asymmetric: () => newPattern(generatePattern(false)),
+    generate: (str) => newPattern(str),
+    next: () => newPattern(generatePattern(isTrue())),
+  };
+
+  const stopTelegram = startTelegramServices(config, router);
+  const stopWeb = startWebService(config, router);
 
   const cleanup = async () => {
     try {
-      await w.close();
-      ch.close();
+      stopTelegram();
+      await stopWeb();
     } catch (error) {
       console.error("Web service close error", error);
     }
