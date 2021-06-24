@@ -14,8 +14,8 @@ module.exports = class Channel {
       this.sendPhoto();
     }, this._period);
   }
-  close() {
-    clearInterval(this._timer);
+  async close() {
+    await Promise.resolve(() => clearInterval(this._timer));
   }
   async sendPhoto() {
     const b = await getBuffer(this._router["next"]().canvas);
