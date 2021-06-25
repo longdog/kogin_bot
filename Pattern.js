@@ -83,10 +83,10 @@ class Pattern {
     }
     const isSymmetric = patternArr.length === 9;
     if (isSymmetric) {
-      this._drawTopStr(patternArr);
+      this._drawPartStr(patternArr, true);
     } else {
-      this._drawTopStr(patternArr.slice(0, 9));
-      this._drawBottomStr(patternArr.slice(9));
+      this._drawPartStr(patternArr.slice(0, 9), true);
+      this._drawPartStr(patternArr.slice(9), false);
     }
     if (isSymmetric) {
       this._mirror(true, false);
@@ -96,68 +96,62 @@ class Pattern {
     }
     return this;
   }
-
+  _getLen(line) {
+    switch (line) {
+      case 1:
+      case 25:
+        return 2;
+      case 2:
+      case 24:
+        return 6;
+      default:
+        return 4;
+    }
+  }
+  _drawLine(pat, y, shift) {
+    let len = this._getLen(y);
+    this._drawStitch(shift, y, len);
+    let i = shift + 5;
+    let hasPrev = false;
+    if (pat) {
+      for (const p of pat) {
+        if (p === "0") {
+          i++;
+        } else {
+          const n = parseInt(p, 20) + 1;
+          this._drawStitch(hasPrev ? ++i : i, y, n);
+          i += n;
+          hasPrev = true;
+        }
+      }
+    }
+  }
   _drawPartStr(patternArr, isTop) {
     this._ctx.strokeStyle = "rgba(0,0,255,1)";
     this._ctx.beginPath();
-    let shift = isTop ? 2 : 4;
-    const getLen = (line) => {
-      switch (line) {
-        case 1:
-        case 25:
-          return 2;
-        case 2:
-        case 24:
-          return 6;
-        default:
-          return 4;
-      }
-    };
-    const drawLine = (pat, y) => {
-      let len = getLen(y);
-      shift += 2;
-      this._drawStitch(shift, y, len);
-      let i = shift + 5;
-      let hasPrev = false;
-      if (pat) {
-        for (const p of pat) {
-          if (p === "0") {
-            i++;
-          } else {
-            const n = parseInt(p, 20) + 1;
-            this._drawStitch(hasPrev ? ++i : i, y, n);
-            i += n;
-            hasPrev = true;
-          }
-        }
-      }
-    };
-    const drawTop = () => {
-      for (let y = 13; y >= 1; y--) {
-        drawLine(patternArr.pop(), y);
-      }
-    };
-    const drawBottom = () => {
-      for (let y = 14; y <= 25; y++) {
-        drawLine(patternArr.shift(), y);
-      }
-    };
-
     if (isTop) {
-      drawTop();
+      this._drawTopStr(patternArr);
     } else {
-      drawBottom();
+      this._drawBottomStr(patternArr);
     }
     this._ctx.stroke();
     this._ctx.closePath();
   }
 
   _drawBottomStr(patternArr) {
-    this._drawPartStr(patternArr, false);
+    let shift = 4;
+    for (let y = 14; y <= 25; y++) {
+      shift += 2;
+      this._drawLine(patternArr.shift(), y, shift);
+    }
   }
 
   _drawTopStr(patternArr) {
-    this._drawPartStr(patternArr, true);
+    let shift = 2;
+    for (let y = 13; y >= 1; y--) {
+      shift += 2;
+      this._drawLine(patternArr.pop(), y, shift);
+    }
   }
 }
 /**
