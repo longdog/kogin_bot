@@ -23,9 +23,6 @@ const newPattern = patternFactory(
   STITCH_LINE,
   GRID_LINE
 );
-// const p = newPattern(generatePattern(false));
-
-// getImage(p.canvas, __dirname + "/test.png");
 
 function startTelegramServices({ token, channel }, router) {
   const bot = new TelegramBot(token, { polling: true });
@@ -95,7 +92,7 @@ if (numCPUs > 1) {
       cleanup(1)();
     });
     if (process.platform === "win32") {
-      var rl = require("readline").createInterface({
+      const rl = require("readline").createInterface({
         input: process.stdin,
         output: process.stdout,
       });
@@ -142,7 +139,7 @@ if (numCPUs > 1) {
   };
 
   if (process.platform === "win32") {
-    var rl = require("readline").createInterface({
+    const rl = require("readline").createInterface({
       input: process.stdin,
       output: process.stdout,
     });
@@ -158,5 +155,3 @@ if (numCPUs > 1) {
     cleanup();
   });
 }
-
-//app(config);

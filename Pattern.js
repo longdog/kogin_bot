@@ -111,7 +111,8 @@ class Pattern {
           len = 6;
           break;
       }
-      this._drawStitch((shift += 2), y, len);
+      shift += 2;
+      this._drawStitch(shift, y, len);
       if (patternArr.length) {
         const pat = patternArr.shift();
         let i = shift + 5;
@@ -146,7 +147,8 @@ class Pattern {
           len = 6;
           break;
       }
-      this._drawStitch((shift += 2), y, len);
+      shift += 2;
+      this._drawStitch(shift, y, len);
       if (patternArr.length) {
         const pat = patternArr.pop();
         let i = shift + 5;
