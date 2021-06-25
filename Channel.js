@@ -6,6 +6,8 @@ module.exports = class Channel {
     this._chanId = chanId;
     this._router = router;
     this._period = period;
+  }
+  start() {
     this._startScheduler();
     console.log("Start channel service");
   }

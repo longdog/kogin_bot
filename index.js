@@ -29,9 +29,10 @@ const newPattern = patternFactory(
 
 function startTelegramServices({ token, channel }, router) {
   const bot = new TelegramBot(token, { polling: true });
-  new Telegram(bot, router);
+  const t = new Telegram(bot, router);
+  t.start();
   const ch = new Channel(bot, channel, router, 1000 * 60 * 60 * 12);
-
+  ch.start();
   return async () => {
     await ch.close();
   };
