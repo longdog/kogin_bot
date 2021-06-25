@@ -1,25 +1,5 @@
 const fs = require("fs");
 
-// const str = `0001
-// 0005
-// 0009
-// 000009
-// 00000009
-// 0001000005
-// 0005000001
-// 0009
-// 000009`;
-
-// const str2 = `0001
-// 0005
-// 0009
-// 000009
-// 00000009
-// 0001000005
-// 0003010001
-// 000503
-// 00050005`;
-
 function getImage(canvas, filepath) {
   const out = fs.createWriteStream(filepath);
   const stream = canvas.createPNGStream();

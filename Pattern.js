@@ -97,26 +97,29 @@ class Pattern {
     return this;
   }
 
-  _drawBottomStr(patternArr) {
+  _drawPartStr(patternArr, isTop) {
     this._ctx.strokeStyle = "rgba(0,0,255,1)";
     this._ctx.beginPath();
-    let shift = 4;
-    for (let y = 14; y <= 25; y++) {
-      let len = 4;
-      switch (y) {
+    let shift = isTop ? 2 : 4;
+    const getLen = (line) => {
+      switch (line) {
+        case 1:
         case 25:
-          len = 2;
-          break;
+          return 2;
+        case 2:
         case 24:
-          len = 6;
-          break;
+          return 6;
+        default:
+          return 4;
       }
+    };
+    const drawLine = (pat, y) => {
+      let len = getLen(y);
       shift += 2;
       this._drawStitch(shift, y, len);
-      if (patternArr.length) {
-        const pat = patternArr.shift();
-        let i = shift + 5;
-        let hasPrev = false;
+      let i = shift + 5;
+      let hasPrev = false;
+      if (pat) {
         for (const p of pat) {
           if (p === "0") {
             i++;
@@ -128,45 +131,33 @@ class Pattern {
           }
         }
       }
+    };
+    const drawTop = () => {
+      for (let y = 13; y >= 1; y--) {
+        drawLine(patternArr.pop(), y);
+      }
+    };
+    const drawBottom = () => {
+      for (let y = 14; y <= 25; y++) {
+        drawLine(patternArr.shift(), y);
+      }
+    };
+
+    if (isTop) {
+      drawTop();
+    } else {
+      drawBottom();
     }
     this._ctx.stroke();
     this._ctx.closePath();
   }
 
+  _drawBottomStr(patternArr) {
+    this._drawPartStr(patternArr, false);
+  }
+
   _drawTopStr(patternArr) {
-    this._ctx.strokeStyle = "rgba(0,0,255,1)";
-    this._ctx.beginPath();
-    let shift = 2;
-    for (let y = 13; y >= 1; y--) {
-      let len = 4;
-      switch (y) {
-        case 1:
-          len = 2;
-          break;
-        case 2:
-          len = 6;
-          break;
-      }
-      shift += 2;
-      this._drawStitch(shift, y, len);
-      if (patternArr.length) {
-        const pat = patternArr.pop();
-        let i = shift + 5;
-        let hasPrev = false;
-        for (const p of pat) {
-          if (p === "0") {
-            i++;
-          } else {
-            const n = parseInt(p, 20) + 1;
-            this._drawStitch(hasPrev ? ++i : i, y, n);
-            i += n;
-            hasPrev = true;
-          }
-        }
-      }
-    }
-    this._ctx.stroke();
-    this._ctx.closePath();
+    this._drawPartStr(patternArr, true);
   }
 }
 /**
