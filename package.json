@@ -11,11 +11,14 @@
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
+    "@types/jest": "^26.0.23",
     "@types/node": "^15.12.1",
-    "@types/node-telegram-bot-api": "^0.51.1"
+    "@types/node-telegram-bot-api": "^0.51.1",
+    "jest": "^27.0.5"
   },
   "scripts": {
     "watch": "watchexec --watch ./ --exts js  yarn start",
-    "start": "node -r dotenv/config ./index.js"
+    "start": "node -r dotenv/config ./index.js",
+    "test": "jest"
   }
 }

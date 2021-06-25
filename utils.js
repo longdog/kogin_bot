@@ -99,4 +99,5 @@ module.exports = {
   getBuffer,
   generatePattern,
   isTrue,
+  getStitchCount,
 };
