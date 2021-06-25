@@ -77,7 +77,7 @@ class Pattern {
   }
 
   draw(str) {
-    let patternArr = str.split(/\n/);
+    const patternArr = str.split(/\n/);
     if (patternArr.length !== 9 && patternArr.length !== 17) {
       throw new Error("wrong format");
     }
@@ -113,7 +113,7 @@ class Pattern {
       }
       this._drawStitch((shift += 2), y, len);
       if (patternArr.length) {
-        let pat = patternArr.shift();
+        const pat = patternArr.shift();
         let i = shift + 5;
         let hasPrev = false;
         for (const p of pat) {
@@ -148,7 +148,7 @@ class Pattern {
       }
       this._drawStitch((shift += 2), y, len);
       if (patternArr.length) {
-        let pat = patternArr.pop();
+        const pat = patternArr.pop();
         let i = shift + 5;
         let hasPrev = false;
         for (const p of pat) {
