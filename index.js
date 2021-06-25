@@ -1,7 +1,6 @@
 process.env.NTBA_FIX_319 = 1;
 const TelegramBot = require("node-telegram-bot-api");
 const cluster = require("cluster");
-const net = require("net");
 const numCPUs = require("os").cpus().length;
 
 const patternFactory = require("./Pattern");
@@ -33,8 +32,8 @@ function startTelegramServices({ token, channel }, router) {
   new Telegram(bot, router);
   const ch = new Channel(bot, channel, router, 1000 * 60 * 60 * 12);
 
-  return () => {
-    ch.close();
+  return async () => {
+    await ch.close();
   };
 }
 
@@ -43,39 +42,6 @@ function startWebService({ port }, router) {
   return async () => {
     await w.close();
   };
-}
-
-function app(config) {
-  const stopTelegram = startTelegramServices(config, router);
-  const stopWeb = startWebService(config, router);
-
-  const cleanup = async () => {
-    try {
-      stopTelegram();
-      await stopWeb();
-    } catch (error) {
-      console.error("Web service close error", error);
-    }
-    console.log("Server stoped");
-    process.exit(0);
-  };
-
-  if (process.platform === "win32") {
-    var rl = require("readline").createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-
-    rl.on("SIGINT", () => {
-      process.emit("SIGINT");
-    });
-  }
-  process.on("SIGTERM", cleanup);
-  process.on("SIGINT", cleanup);
-  process.on("uncaughtException", (err, origin) => {
-    console.error(err, origin);
-    cleanup();
-  });
 }
 
 const config = {
