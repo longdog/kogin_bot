@@ -28,6 +28,9 @@ module.exports = class Web {
       .listen(port);
     console.log("Start web service");
   }
+  get server() {
+    return this._server;
+  }
   async close() {
     await new Promise((res, rej) =>
       this._server.close((err) => {
