@@ -1,5 +1,4 @@
 const {
-  getImage,
   getBuffer,
   generatePattern,
   isTrue,
