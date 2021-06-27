@@ -84,7 +84,7 @@ if (numCPUs > 1) {
         worker.send({ name: "web" });
       }
     }
-    cluster.on("exit", (worker, code, signal) => {
+    cluster.on("exit", (worker) => {
       console.log(`worker ${worker.process.title} died`);
     });
     process.on("uncaughtException", (err, origin) => {
