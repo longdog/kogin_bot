@@ -2,26 +2,24 @@ process.env.NTBA_FIX_319 = 1;
 const TelegramBot = require("node-telegram-bot-api");
 const cluster = require("cluster");
 const numCPUs = require("os").cpus().length;
+const { patternFactory, patternGenerator } = require("koginlib");
 
-const patternFactory = require("./Pattern");
 const Telegram = require("./Telegram");
 const Web = require("./Web");
 const Channel = require("./Channel");
 
-const { generatePattern, isTrue } = require("./utils");
+const { isTrue } = require("./utils");
 
 const DOT = 20;
-const GRID_LINE = 1;
 const STITCH_LINE = 5;
 
 const [CANVAS_WIDTH, CANVAS_HEIGHT] = [29 * DOT + DOT / 2, 280.5];
 
-const newPattern = patternFactory(
+const pattern = patternFactory(
   CANVAS_WIDTH * 2,
   CANVAS_HEIGHT * 2 - DOT,
   DOT,
-  STITCH_LINE,
-  GRID_LINE
+  STITCH_LINE
 );
 
 function startTelegramServices({ token, channel }, router) {
@@ -48,11 +46,15 @@ const config = {
   port: process.env["PORT"],
 };
 
+const g = patternGenerator(pattern, true);
+
 const router = {
-  symmetric: () => newPattern(generatePattern(true)),
-  asymmetric: () => newPattern(generatePattern(false)),
-  generate: (str) => newPattern(str),
-  next: () => newPattern(generatePattern(isTrue())),
+  symmetric: () => {
+    return g(true).next().value;
+  },
+  asymmetric: () => g(false).next().value,
+  generate: (str) => pattern(str, true),
+  next: () => g(isTrue()).next().value,
 };
 if (numCPUs > 1) {
   if (cluster.isMaster) {
