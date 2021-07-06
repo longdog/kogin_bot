@@ -2,7 +2,7 @@ process.env.NTBA_FIX_319 = 1;
 const TelegramBot = require("node-telegram-bot-api");
 const cluster = require("cluster");
 const numCPUs = require("os").cpus().length;
-const { patternFactory, patternGenerator } = require("koginlib");
+const { patternNodeFactory, patternGenerator } = require("koginlib");
 
 const Telegram = require("./Telegram");
 const Web = require("./Web");
@@ -15,7 +15,7 @@ const STITCH_LINE = 5;
 
 const [CANVAS_WIDTH, CANVAS_HEIGHT] = [29 * DOT + DOT / 2, 280.5];
 
-const pattern = patternFactory(
+const pattern = patternNodeFactory(
   CANVAS_WIDTH * 2,
   CANVAS_HEIGHT * 2 - DOT,
   DOT,
