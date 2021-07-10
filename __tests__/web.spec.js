@@ -1,18 +1,6 @@
-const { Readable } = require("stream");
 const request = require("supertest");
+const { router } = require("./mocks");
 const Web = require("../Web");
-
-const pattern = {
-  canvas: {
-    createPNGStream() {
-      return Readable.from(["ok"]);
-    },
-  },
-};
-const router = {
-  asymmetric: () => pattern,
-  symmetric: () => pattern,
-};
 
 const retTest = (server, done) => (err, res) => {
   server.close();

@@ -1,43 +1,5 @@
-const { Readable } = require("stream");
 const Channel = require("../Channel");
-
-const pattern = (type) => ({
-  canvas: {
-    createPNGStream() {
-      return Readable.from(["ok"]);
-    },
-    toBuffer(callback) {
-      callback(null, type);
-    },
-  },
-});
-const router = {
-  asymmetric: () => pattern("asymmetric"),
-  symmetric: () => pattern("symmetric"),
-  next: () => pattern("next"),
-  generate: (str) => pattern(str),
-};
-
-function Bot() {
-  this.routes = new Map();
-  this.dispatch = async (s, msg) => {
-    for (const r of this.routes) {
-      if (r[0].test(s)) {
-        await r[1](msg, { input: s });
-        return;
-      }
-    }
-  };
-  this.onText = (route, callback) => {
-    this.routes.set(route, callback);
-  };
-  this.sendPhoto = (chatId, b) => {
-    this.photo = { chatId, b };
-  };
-  this.sendMessage = (chatId, err) => {
-    this.photo = { chatId, err };
-  };
-}
+const { router, Bot } = require("./mocks");
 
 describe("Channel", () => {
   it("should be init and has _bot, __chanId, _period and _router fields", () => {
@@ -58,14 +20,16 @@ describe("Channel work", () => {
     t = new Channel(b, "test", router, 100);
     t.start();
   });
-  afterEach(async () => await t.close());
+  afterEach(async () => {
+    await t.close();
+  });
   it("should return next photo on sendPhoto", async () => {
     await t.sendPhoto();
     expect(b.photo.b).toBe("next");
   });
   it("should init timer on start", () => {
-    const b = new Bot();
-    const t = new Channel(b, "test", router, 100);
+    b = new Bot();
+    t = new Channel(b, "test", router, 100);
     t.start();
     expect(t._timer).toBeDefined();
   });
