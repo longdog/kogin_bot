@@ -22,7 +22,6 @@ function Bot() {
   this.dispatch = async (s, msg) => {
     for (const r of this.routes) {
       if (r[0].test(s)) {
-        console.log(msg);
         await r[1](msg, { input: s });
         return;
       }
