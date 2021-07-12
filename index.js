@@ -48,7 +48,7 @@ const config = {
 
 const g = patternGenerator(pattern, true);
 
-const router = {
+const routerConfig = {
   symmetric: () => {
     return g(true).next().value;
   },
@@ -112,11 +112,11 @@ if (numCPUs > 1) {
       if (message.name === "telegram") {
         console.log("TELEGRAM");
         process.title = "telegram";
-        close = startTelegramServices(config, router);
+        close = startTelegramServices(config, routerConfig);
       } else {
         console.log("WEB");
         process.title = "web";
-        close = startWebService(config, router);
+        close = startWebService(config, routerConfig);
       }
     });
     process.on("exit", async () => {
@@ -127,8 +127,8 @@ if (numCPUs > 1) {
     });
   }
 } else {
-  const stopTelegram = startTelegramServices(config, router);
-  const stopWeb = startWebService(config, router);
+  const stopTelegram = startTelegramServices(config, routerConfig);
+  const stopWeb = startWebService(config, routerConfig);
   const cleanup = async () => {
     try {
       await stopTelegram();
