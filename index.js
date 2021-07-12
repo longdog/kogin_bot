@@ -40,6 +40,31 @@ function startWebService({ port }, router) {
   };
 }
 
+function gracefulStop(cleanup) {
+  let status = 0;
+  const clean = () => {
+    cleanup();
+    setTimeout(() => process.exit(status), 2000);
+  };
+  if (process.platform === "win32") {
+    const rl = require("readline").createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    rl.on("SIGINT", () => {
+      process.emit("SIGINT");
+    });
+  }
+  process.on("SIGTERM", clean);
+  process.on("SIGINT", clean);
+  process.on("uncaughtException", (err, origin) => {
+    console.error(err, origin);
+    status = 1;
+    clean();
+  });
+}
+
 const config = {
   token: process.env["TOKEN"],
   channel: process.env["CHANNEL"],
@@ -62,15 +87,12 @@ if (numCPUs > 1) {
     var workers = {};
     process.title = "kogin";
 
-    const cleanup = (status) => {
-      return () => {
-        console.log("Master stopping.");
+    const cleanup = () => {
+      console.log("Master stopping.");
 
-        for (let pid in workers) {
-          workers[pid].kill();
-        }
-        setTimeout(() => process.exit(status), 2000);
-      };
+      for (let pid in workers) {
+        workers[pid].kill();
+      }
     };
 
     let isFirst = true;
@@ -89,22 +111,7 @@ if (numCPUs > 1) {
     cluster.on("exit", (worker) => {
       console.log(`worker ${worker.process.title} died`);
     });
-    process.on("uncaughtException", (err, origin) => {
-      console.error(err, origin);
-      cleanup(1)();
-    });
-    if (process.platform === "win32") {
-      const rl = require("readline").createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      });
-
-      rl.on("SIGINT", () => {
-        process.emit("SIGINT");
-      });
-    }
-    process.on("SIGTERM", cleanup(0));
-    process.on("SIGINT", cleanup(0));
+    gracefulStop(cleanup);
   } else {
     console.log(`Worker ${process.pid} is running`);
     let close = undefined;
@@ -137,23 +144,6 @@ if (numCPUs > 1) {
       console.error("Service close error", error);
     }
     console.log("Server stoped");
-    process.exit(0);
   };
-
-  if (process.platform === "win32") {
-    const rl = require("readline").createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-
-    rl.on("SIGINT", () => {
-      process.emit("SIGINT");
-    });
-  }
-  process.on("SIGTERM", cleanup);
-  process.on("SIGINT", cleanup);
-  process.on("uncaughtException", (err, origin) => {
-    console.error(err, origin);
-    cleanup();
-  });
+  gracefulStop(cleanup);
 }
