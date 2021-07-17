@@ -6,6 +6,31 @@
 
 Bot generates kogin patterns
 
+## Commannds
+
+`/symmetric` - Get symmetric pattern
+
+`/asymmetric` - Get asymmetric pattern
+
+or you can send your own string pattern
+
+```
+0001
+0003
+0003
+000301
+00000003
+0001000003
+0005000001
+000303
+00030103
+```
+
+![String pattern rules](./template.png)
+
+
+
+
 [Kogin site](https://kogin.longdog.us)
 
 [@kogin_bot](https://t.me/kogin_bot)

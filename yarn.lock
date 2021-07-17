@@ -767,6 +767,11 @@ acorn@^8.2.4:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.4.1.tgz#56c36251fc7cabc7096adc18f05afe814321a28c"
   integrity sha512-asabaBSkEKosYKMITunzX177CXxQ4Q8BSSzMTKD+FefUhipQC70gfW5SiUDhYQ3vk8G+81HqQk7Fv9OXwwn9KA==
 
+adm-zip@^0.5.5:
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/adm-zip/-/adm-zip-0.5.5.tgz#b6549dbea741e4050309f1bb4d47c47397ce2c4f"
+  integrity sha512-IWwXKnCbirdbyXSfUDvCCrmYrOHANRZcc8NcRrvTlIApdl7PwE9oGcsYvNeJPAVY1M+70b4PxXGKIf8AEuiQ6w==
+
 agent-base@6:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-6.0.2.tgz#49fff58577cfee3f37176feab4c22e00f86d7f77"
@@ -2886,6 +2891,12 @@ node-telegram-bot-api@^0.53.0:
     pump "^2.0.0"
     request "^2.83.0"
     request-promise "^4.2.2"
+
+"node-watchexec@https://github.com/longdog/node-watchexec.git":
+  version "1.0.0"
+  resolved "https://github.com/longdog/node-watchexec.git#252a792e1dae32c773470d677cf39a97dbb1b596"
+  dependencies:
+    adm-zip "^0.5.5"
 
 nopt@^5.0.0:
   version "5.0.0"
