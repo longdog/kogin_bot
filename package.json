@@ -22,7 +22,7 @@
   "scripts": {
     "watch": "watchexec --watch ./ --exts js  yarn start",
     "start": "node -r dotenv/config ./index.js",
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "lint": "eslint . --ext .js"
   }
 }

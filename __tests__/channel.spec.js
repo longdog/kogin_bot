@@ -15,22 +15,19 @@ describe("Channel", () => {
 describe("Channel work", () => {
   let t = undefined;
   let b = undefined;
-  beforeEach(() => {
+  beforeEach(async () => {
     b = new Bot();
     t = new Channel(b, "test", router, 100);
     t.start();
   });
   afterEach(async () => {
-    await t.close();
+    return await t.close();
   });
   it("should return next photo on sendPhoto", async () => {
     await t.sendPhoto();
     expect(b.photo.b).toBe("next");
   });
-  it("should init timer on start", () => {
-    b = new Bot();
-    t = new Channel(b, "test", router, 100);
-    t.start();
+  it("should init timer on start", async () => {
     expect(t._timer).toBeDefined();
   });
 });
