@@ -27,7 +27,10 @@ describe("Channel work", () => {
     await t.sendPhoto();
     expect(b.photo.b).toBe("next");
   });
+  // it("should init timer on start", async () => {
+  //   expect(t._timer).toBeDefined();
+  // });
   it("should init timer on start", async () => {
-    expect(t._timer).toBeDefined();
+    expect(t._stopTimer).toBeDefined();
   });
 });
