@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "cwd": "/app",
+      "name": "kogin",
+      "script": "./index.js",
+      "node_args": "-r dotenv/config",
+      "error_file": "./logs/kogin.err.log",
+      "out_file": "./logs/kogin.out.log",
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
+    }
+  ]
+}
