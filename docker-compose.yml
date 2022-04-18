@@ -1,0 +1,6 @@
+kogin:
+  build: .
+  container_name: kogin
+  restart: always
+  ports:
+    - "3005:3005"
