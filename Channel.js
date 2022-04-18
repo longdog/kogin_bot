@@ -12,6 +12,7 @@ module.exports = class Channel {
   start() {
     this._startScheduler();
     console.log("Start channel service");
+    this.sendPhoto();
   }
   _startScheduler() {
     this._stopTimer = new AbortController();
@@ -28,6 +29,11 @@ module.exports = class Channel {
   }
   async sendPhoto() {
     const b = await getBuffer(this._router["next"]().canvas);
-    this._bot.sendPhoto(`@${this._chanId}`, b);
+    this._bot.sendPhoto(
+      `@${this._chanId}`,
+      b,
+      {},
+      { contentType: "image/png", filename: "kogin.png" }
+    );
   }
 };
