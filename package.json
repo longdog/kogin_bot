@@ -6,7 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "^10.0.0",
-    "koginlib": "^1.0.0",
+    "koginlib": "https://github.com/longdog/koginlib.git",
     "node-telegram-bot-api": "^0.53.0"
   },
   "devDependencies": {
