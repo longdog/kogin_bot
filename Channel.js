@@ -1,5 +1,3 @@
-const { setInterval } = require("timers/promises");
-
 const { getBuffer } = require("./utils");
 
 module.exports = class Channel {
@@ -15,17 +13,12 @@ module.exports = class Channel {
     this.sendPhoto();
   }
   _startScheduler() {
-    this._stopTimer = new AbortController();
-    setInterval(this._period, this.sendPhoto, {
-      signal: this._stopTimer.signal,
-    });
-    // this._timer = setInterval(() => {
-    //   this.sendPhoto();
-    // }, this._period);
+    this._timer = setInterval(() => {
+      this.sendPhoto();
+    }, this._period);
   }
   async close() {
-    //clearInterval(this._timer);
-    this._stopTimer.abort();
+    clearInterval(this._timer);
   }
   async sendPhoto() {
     const b = await getBuffer(this._router["next"]().canvas);
