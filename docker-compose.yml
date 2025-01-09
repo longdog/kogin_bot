@@ -1,6 +1,24 @@
-kogin:
-  build: .
-  container_name: kogin
-  restart: always
-  ports:
-    - "3005:3005"
+version: "3.7"
+services:
+  app:
+      image: ghcr.io/longdog/kogin_bot
+      container_name: kogin
+      pull_policy: always
+      deploy:
+        replicas: 1
+        restart_policy:
+          condition: on-failure
+          delay: 30s
+          window: 120s
+      healthcheck:
+        test: ["CMD", "curl -f http://localhost:3005/ || exit 1"] # note that curl should be available in the image
+        timeout: 30s
+        interval: 1m
+        retries: 3
+
+      ports:
+        - "3005:3005"
+      environment:
+        TOKEN: telegram_token
+        CHANNEL: telegram_channel
+        PORT: 3005
