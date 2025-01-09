@@ -1,4 +1,4 @@
-FROM keymetrics/pm2:18-slim
+FROM node:18.12.0
 ENV NODE_ENV=production \
     NPM_CONFIG_LOGLEVEL=warn
 RUN apt-get -qq update && apt-get -qq -y upgrade
@@ -9,4 +9,4 @@ COPY ./package.json ./yarn.lock ./
 RUN yarn config set network-timeout 600000 -g
 RUN yarn
 COPY . .
-CMD ["pm2-runtime",  "process.json"]
+CMD ["node", "-r", "dotenv/config", "index.js"]
