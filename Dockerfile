@@ -9,4 +9,4 @@ COPY ./package.json ./yarn.lock ./
 RUN yarn config set network-timeout 600000 -g
 RUN yarn
 COPY . .
-CMD ["node", "-r", "dotenv/config", "index.js"]
+CMD ["node", "index.js"]
